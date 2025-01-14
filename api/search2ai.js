@@ -4,6 +4,7 @@ const crawler = require('../units/crawler.js');
 const news = require('../units/news.js');
 const { config } = require('dotenv');
 const Stream = require('stream');
+const debug = require('debug');
 
 config();
 
@@ -14,6 +15,7 @@ const corsHeaders = {
     'Access-Control-Max-Age': '86400', // 预检请求结果的缓存时间
 };
 async function handleRequest(req, res, apiBase, apiKey) {
+    const log = debug('handleRequest')
     let responseSent = false;
         if (req.method !== 'POST') {
             console.log(`不支持的请求方法: ${req.method}`);
@@ -125,7 +127,8 @@ async function handleRequest(req, res, apiBase, apiKey) {
     }
     
     messages.push(data.choices[0].message);
-    console.log('更新后的 messages 数组:', messages);
+    // console.log('更新后的 messages 数组:', messages);
+    log('更新后的 messages 数组: %s', JSON.stringify(messages));
     // 检查是否有函数调用
     console.log('开始检查是否有函数调用');
 
@@ -169,6 +172,7 @@ async function handleRequest(req, res, apiBase, apiKey) {
             messages: messages,
             stream: stream
         };
+        log('after function called, request again %O', requestBody)
         try {
             let secondResponse = await fetch(`${apiBase}/v1/chat/completions`, {
                 method: 'POST',

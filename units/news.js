@@ -1,9 +1,11 @@
 const fetch = require('node-fetch');
 const process = require('process');
+const debug = require('debug');
 const { config } = require('dotenv');
 config({ path: __dirname + '/../.env' });
 
 async function news(query) {
+    const log = debug('news')
     console.log(`正在使用查询进行新闻搜索: ${JSON.stringify(query)}`);
     
     try {
@@ -125,6 +127,7 @@ async function news(query) {
       };
       
       console.log('新闻搜索服务调用完成');
+      log('news query results: %s', JSON.stringify(data));
       return JSON.stringify(data);
       
     } catch (error) {
